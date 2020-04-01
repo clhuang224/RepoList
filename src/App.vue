@@ -1,32 +1,43 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+    <div id="app">
+        <Sidebar />
+        <router-view />
     </div>
-    <router-view />
-  </div>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
+<script>
+import Sidebar from "./components/Sidebar";
+export default {
+    name: "App",
+    children: { Sidebar },
+    metaInfo: {
+        title: "Lynn's RepoList",
+        meta: [
+            {
+                name: "description",
+                content:"這裡展示 Lynn 的 GitHub 專案。"
+            },
+            {
+                property: "og:title",
+                content: "Lynn's RepoList"
+            },
+            {
+                property: "og:site_name",
+                content: "Lynn's RepoList"
+            },
+            {
+                property: "og:description",
+                content: "這裡展示 Lynn 的 GitHub 專案。"
+            },{
+                property: "og:image",
+                content: "https://avatars1.githubusercontent.com/u/47549901?s=460&u=fb0010a5ba241311fcaad2826a7dda7119a173e5&v=4"
+            },{
+                property: "og:url",
+                content: "https://github.com/clhuang224/RepoList"
+            }
+        ]
     }
-  }
-}
-</style>
+};
+</script>
+
+<style lang="scss"></style>
