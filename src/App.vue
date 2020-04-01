@@ -1,5 +1,5 @@
 <template>
-    <div id="app">
+    <div id="app" class="app">
         <Sidebar />
         <router-view />
     </div>
@@ -9,13 +9,13 @@
 import Sidebar from "./components/Sidebar";
 export default {
     name: "App",
-    children: { Sidebar },
+    components: { Sidebar },
     metaInfo: {
         title: "Lynn's RepoList",
         meta: [
             {
                 name: "description",
-                content:"這裡展示 Lynn 的 GitHub 專案。"
+                content: "這裡展示 Lynn 的 GitHub 專案。"
             },
             {
                 property: "og:title",
@@ -28,10 +28,13 @@ export default {
             {
                 property: "og:description",
                 content: "這裡展示 Lynn 的 GitHub 專案。"
-            },{
+            },
+            {
                 property: "og:image",
-                content: "https://avatars1.githubusercontent.com/u/47549901?s=460&u=fb0010a5ba241311fcaad2826a7dda7119a173e5&v=4"
-            },{
+                content:
+                    "https://avatars1.githubusercontent.com/u/47549901?s=460&u=fb0010a5ba241311fcaad2826a7dda7119a173e5&v=4"
+            },
+            {
                 property: "og:url",
                 content: "https://github.com/clhuang224/RepoList"
             }
@@ -40,4 +43,14 @@ export default {
 };
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+@import "reset-css";
+@import "./assets/scss/_font.scss";
+* {
+    box-sizing: border-box;
+}
+.app {
+    font-family: "huninn";
+    display: flex;
+}
+</style>
