@@ -46,11 +46,22 @@ export default {
 <style lang="scss">
 @import "reset-css";
 @import "./assets/scss/_font.scss";
+
+$appBackgroundColor: #000;
+$sidebarWidth: 250px;
+
 * {
     box-sizing: border-box;
 }
 .app {
+    background-color: $appBackgroundColor;
     font-family: "huninn";
-    display: flex;
+    display: grid;
+    grid-template-columns: 250px auto;
+    font-size: 12px;
+    img {
+        width: 100%;
+        height: auto;
+    }
 }
 </style>

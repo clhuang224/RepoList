@@ -1,12 +1,49 @@
 <template>
     <div class="sidebar">
-        <div class="name">{{ data.name }}</div>
-        <img :src="data.avatar_url" alt="avatar" />
-        <div class="company">{{ data.company }}</div>
-        <div class="blog">{{ data.blog }}</div>
-        <div class="email">{{ data.email }}</div>
-        <div class="created_at">{{ data.created_at }}</div>
-        <div class="html_url">{{ data.html_url }}</div>
+        <div
+            class="avatar"
+            :style="`background-image:url(${data.avatar_url})`"
+        ></div>
+        <h1>
+            {{ data.name }} <span class="subtitle">{{ data.login }}</span>
+        </h1>
+        <ul class="list">
+            <li class="item">
+                <a
+                    :href="
+                        `https://www.google.com.tw/maps/search/${data.location}`
+                    "
+                >
+                    <font-awesome-icon
+                        class="icon"
+                        :icon="['fas', 'map-marker-alt']"
+                    />
+                    <span class="text">{{ data.location }}</span>
+                </a>
+            </li>
+            <li class="item">
+                <a :href="data.blog">
+                    <font-awesome-icon class="icon" :icon="['fas', 'rss']" />
+                    <span class="text">{{ data.blog | simplifyUrl }}</span>
+                </a>
+            </li>
+            <li class="item">
+                <a :href="`mailto:${data.email}`">
+                    <font-awesome-icon
+                        class="icon"
+                        :icon="['fas', 'envelope']"
+                    />
+                    <span class="text">{{ data.email }}</span>
+                </a>
+            </li>
+            <li class="item">
+                <a :href="data.html_url">
+                    <font-awesome-icon class="icon" :icon="['fab', 'github']" />
+                    <span class="text">{{ data.html_url | simplifyUrl }}</span>
+                </a>
+            </li>
+        </ul>
+
         <div class="loading"></div>
     </div>
 </template>
@@ -26,6 +63,9 @@ export default {
                 url: `https://api.github.com/users/${process.env.VUE_APP_ID}`,
                 header: {
                     Accept: "application/vnd.github.v3+json"
+                },
+                params: {
+                    access_token: process.env.VUE_APP_GITHUB_ACCESS_TOKEN
                 }
             })
                 .then(res => {
@@ -37,6 +77,13 @@ export default {
                 });
         }
     },
+    filters: {
+        simplifyUrl: function(value) {
+            return value
+                ? value.replace("http://", "").replace("https://", "")
+                : "";
+        }
+    },
     mounted() {
         this.getData();
     }
@@ -44,7 +91,56 @@ export default {
 </script>
 
 <style scoped lang="scss">
+$sidebarTextColor: #fff;
+$sidebarHoverColor: #fff;
+
+$sidebarWidth: 250px;
+$avatarSize: $sidebarWidth * 0.6;
+
+$titleSize: 1.2rem;
+
+$listTextSize: 0.8rem;
+
 .sidebar {
-    width: 325px;
+    color: $sidebarTextColor;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+.avatar {
+    width: $avatarSize;
+    height: $avatarSize;
+    border-radius: 50%;
+    background-size: contain;
+    background-position: center center;
+    align-self: center;
+    margin: 20px;
+}
+h1 {
+    padding: 5px;
+    font-size: $titleSize;
+    .subtitle {
+        font-size: $titleSize * 0.7;
+        opacity: 0.7;
+    }
+}
+
+.list {
+    font-size: $listTextSize;
+    padding: 5px;
+    .icon {
+        margin-right: 0.3em;
+        width: 1em;
+    }
+    .item {
+        padding: 6px;
+        @import "../assets/scss/_link.scss";
+        a {
+            color: $sidebarTextColor;
+            &::after{
+                background-color: $sidebarHoverColor;
+            }
+        }
+    }
 }
 </style>
