@@ -11,14 +11,15 @@ import {
     faRss,
     faEnvelope,
     faCode,
-    faEye
+    faEye,
+    faQuoteLeft
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 Vue.use(VueMeta);
 Vue.use(VueAxios, axios);
 
-library.add(faGithub, faMapMarkerAlt, faRss, faEnvelope, faCode, faEye);
+library.add(faGithub, faMapMarkerAlt, faRss, faEnvelope, faCode, faEye, faQuoteLeft);
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 
 Vue.config.productionTip = false;

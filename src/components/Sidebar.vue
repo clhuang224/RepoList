@@ -1,62 +1,75 @@
 <template>
     <div class="sidebar">
-        <div
-            class="avatar"
-            :style="`background-image:url(${data.avatar_url})`"
-        ></div>
-        <h1>
-            {{ data.name }} <span class="subtitle">{{ data.login }}</span>
-        </h1>
-        <ul class="list">
-            <li class="item">
-                <a
-                    :href="
-                        `https://www.google.com.tw/maps/search/${data.location}`
-                    "
-                >
-                    <font-awesome-icon
-                        class="icon"
-                        :icon="['fas', 'map-marker-alt']"
-                    />
-                    <span class="text">{{ data.location }}</span>
-                </a>
-            </li>
-            <li class="item">
-                <a :href="data.blog">
-                    <font-awesome-icon class="icon" :icon="['fas', 'rss']" />
-                    <span class="text">{{ data.blog | simplifyUrl }}</span>
-                </a>
-            </li>
-            <li class="item">
-                <a :href="`mailto:${data.email}`">
-                    <font-awesome-icon
-                        class="icon"
-                        :icon="['fas', 'envelope']"
-                    />
-                    <span class="text">{{ data.email }}</span>
-                </a>
-            </li>
-            <li class="item">
-                <a :href="data.html_url">
-                    <font-awesome-icon class="icon" :icon="['fab', 'github']" />
-                    <span class="text">{{ data.html_url | simplifyUrl }}</span>
-                </a>
-            </li>
-        </ul>
-
-        <div class="loading"></div>
+        <div v-if="loading === false">
+            <div
+                class="avatar"
+                :style="`background-image:url(${data.avatar_url})`"
+            ></div>
+            <h1>
+                {{ data.name }} <span class="subtitle">{{ data.login }}</span>
+            </h1>
+            <ul class="list">
+                <li class="item">
+                    <a
+                        :href="
+                            `https://www.google.com.tw/maps/search/${data.location}`
+                        "
+                        target="_blank"
+                    >
+                        <font-awesome-icon
+                            class="icon"
+                            :icon="['fas', 'map-marker-alt']"
+                        />
+                        <span class="text">{{ data.location }}</span>
+                    </a>
+                </li>
+                <li class="item">
+                    <a :href="data.blog" target="_blank">
+                        <font-awesome-icon
+                            class="icon"
+                            :icon="['fas', 'rss']"
+                        />
+                        <span class="text">{{ data.blog | simplifyUrl }}</span>
+                    </a>
+                </li>
+                <li class="item">
+                    <a :href="`mailto:${data.email}`">
+                        <font-awesome-icon
+                            class="icon"
+                            :icon="['fas', 'envelope']"
+                        />
+                        <span class="text">{{ data.email }}</span>
+                    </a>
+                </li>
+                <li class="item">
+                    <a :href="data.html_url" target="_blank">
+                        <font-awesome-icon
+                            class="icon"
+                            :icon="['fab', 'github']"
+                        />
+                        <span class="text">{{
+                            data.html_url | simplifyUrl
+                        }}</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <Loader v-else></Loader>
     </div>
 </template>
 
 <script>
+import Loader from "./Loader";
 export default {
     name: "Sidebar",
+    components: { Loader },
     data: () => ({
         data: [],
         loading: true
     }),
     methods: {
         getData: function() {
+            this.loading = true;
             let that = this;
             this.$http({
                 method: "get",
@@ -91,6 +104,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+$sidebarBackgroundColor: #000;
 $sidebarTextColor: #fff;
 $sidebarHoverColor: #fff;
 
@@ -103,9 +117,13 @@ $listTextSize: 0.8rem;
 
 .sidebar {
     color: $sidebarTextColor;
+    background-color: $sidebarBackgroundColor;
+    height: 100vh;
     padding: 10px;
+    position: fixed;
     display: flex;
     flex-direction: column;
+    width: $sidebarWidth;
 }
 .avatar {
     width: $avatarSize;
@@ -137,7 +155,7 @@ h1 {
         @import "../assets/scss/_link.scss";
         a {
             color: $sidebarTextColor;
-            &::after{
+            &::after {
                 background-color: $sidebarHoverColor;
             }
         }
