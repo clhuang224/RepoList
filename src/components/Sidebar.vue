@@ -33,12 +33,14 @@
                     </a>
                 </li>
                 <li class="item">
-                    <a :href="`mailto:${data.email}`">
+                    <a :href="`mailto:${process.env.VUE_APP_EMAIL}`">
                         <font-awesome-icon
                             class="icon"
                             :icon="['fas', 'envelope']"
                         />
-                        <span class="text">{{ data.email }}</span>
+                        <span class="text">{{
+                            process.env.VUE_APP_EMAIL
+                        }}</span>
                     </a>
                 </li>
                 <li class="item">
@@ -75,10 +77,8 @@ export default {
                 method: "get",
                 url: `https://api.github.com/users/${process.env.VUE_APP_ID}`,
                 header: {
-                    Accept: "application/vnd.github.v3+json"
-                },
-                params: {
-                    access_token: process.env.VUE_APP_GITHUB_ACCESS_TOKEN
+                    Accept: "application/vnd.github.v3+json",
+                    Authorization: `${process.env.VUE_APP_GITHUB_ACCESS_TOKEN}`
                 }
             })
                 .then(res => {

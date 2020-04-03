@@ -98,7 +98,7 @@ export default {
                     Accept: "application/vnd.github.nebula-preview+json"
                 },
                 params: {
-                    access_token: process.env.VUE_APP_GITHUB_ACCESS_TOKEN,
+                    // access_token: process.env.VUE_APP_GITHUB_ACCESS_TOKEN,
                     sort: "pushed",
                     page: this.page,
                     per_page: 100
@@ -124,9 +124,9 @@ export default {
                 header: {
                     Accept: "application/vnd.github.v3+json"
                 },
-                params: {
-                    access_token: process.env.VUE_APP_GITHUB_ACCESS_TOKEN
-                }
+                // params: {
+                //     access_token: process.env.VUE_APP_GITHUB_ACCESS_TOKEN
+                // }
             })
                 .then(res => {
                     let obj = {
