@@ -1,5 +1,8 @@
 <template>
-  <div class="sidebar">
+  <div class="sidebar" :class="{ hide: toggleSidebar === false }">
+    <button class="toggleButton" @click="toggleSidebar = !toggleSidebar">
+      <font-awesome-icon class="icon" :icon="['fas', 'ellipsis-v']" />
+    </button>
     <div v-if="loading === false">
       <div
         class="avatar"
@@ -25,9 +28,9 @@
           </a>
         </li>
         <li class="item">
-          <a :href="`mailto:${email}`">
+          <a :href="`mailto:${data.email}`">
             <font-awesome-icon class="icon" :icon="['fas', 'envelope']" />
-            <span class="text">{{ email }}</span>
+            <span class="text">{{ data.email }}</span>
           </a>
         </li>
         <li class="item">
@@ -38,7 +41,7 @@
         </li>
       </ul>
     </div>
-    <Loader v-else></Loader>
+    <Loader type="global" zIndex="999" v-else></Loader>
   </div>
 </template>
 
@@ -50,7 +53,7 @@ export default {
   data: () => ({
     data: [],
     loading: true,
-    email: process.env.VUE_APP_EMAIL
+    toggleSidebar: true
   }),
   methods: {
     getData: function() {
@@ -61,7 +64,7 @@ export default {
         url: `https://api.github.com/users/${process.env.VUE_APP_ID}`,
         headers: {
           Accept: "application/vnd.github.v3+json",
-          Authorization: `Bearer ${process.env.VUE_APP_GITHUB_ACCESS_TOKEN}`,
+          Authorization: `Bearer ${process.env.VUE_APP_GITHUB_ACCESS_TOKEN_1}${process.env.VUE_APP_GITHUB_ACCESS_TOKEN_2}`,
           "Content-Type": "application/json"
         }
       })
@@ -86,9 +89,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-$sidebarBackgroundColor: #000;
-$sidebarTextColor: #fff;
-$sidebarHoverColor: #fff;
+@import "../assets/scss/_color.scss";
 
 $sidebarWidth: 250px;
 $avatarSize: $sidebarWidth * 0.6;
@@ -98,15 +99,54 @@ $titleSize: 1.2rem;
 $listTextSize: 0.8rem;
 
 .sidebar {
-  color: $sidebarTextColor;
-  background-color: $sidebarBackgroundColor;
+  color: $secondary;
+  background-color: $primary;
   height: 100vh;
   padding: 10px;
   position: fixed;
   display: flex;
   flex-direction: column;
   width: $sidebarWidth;
+  z-index: 99999;
+  transition: transform cubic-bezier(0.25, 0.1, 0.25, 1) 0.5s;
+  .toggleButton {
+    display: none;
+    position: absolute;
+    right: 5px;
+    top: 15px;
+    width: 30px;
+    height: 30px;
+    font-size: 2em;
+    background: none;
+    border: none;
+    color: $secondary;
+    border-radius: 0 5px 5px 0;
+    transition: transform cubic-bezier(0.25, 0.1, 0.25, 1) 0.5s,
+      background-color cubic-bezier(0.25, 0.1, 0.25, 1) 0.5s;
+    &:hover {
+      color: $tertiary-1;
+    }
+  }
+  @media (max-width: 768px) {
+    .toggleButton {
+      display: block;
+    }
+  }
+  &.hide {
+    transform: translateX(-250px);
+    .toggleButton {
+      transform: translateX(40px);
+      color: $primary;
+      background-color: $secondary;
+      border: 1px solid #eee;
+      border-left: none;
+      &:hover {
+        color: $tertiary-1;
+      }
+    }
+  }
 }
+
 .avatar {
   width: $avatarSize;
   height: $avatarSize;
@@ -136,9 +176,14 @@ h1 {
     padding: 6px;
     @import "../assets/scss/_link.scss";
     a {
-      color: $sidebarTextColor;
+      color: $secondary;
       &::after {
-        background-color: $sidebarHoverColor;
+        background-color: $tertiary-2;
+        bottom: -10%;
+        height: 3px;
+      }
+      &:hover::after {
+        opacity: 1;
       }
     }
   }

@@ -18,7 +18,7 @@ a {
         transform: scale(0, 1);
     }
     &:hover::after {
-        opacity: 0.4;
+        opacity: 1;
         transform: scale(1);
     }
 }

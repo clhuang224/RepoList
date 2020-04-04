@@ -1,13 +1,13 @@
 <template>
   <div class="repository">
-    <ul class="list" v-if="loading === false">
+    <ul class="list">
       <div v-for="(item, index, key) of data" :key="key">
         <li
           class="item"
           v-if="item.id !== 252436010"
           :style="{
             backgroundImage: `url(
-                        https://clhuang224.github.io/screenshot/${item.id}.png)`
+                        https://clhuang224.github.io/screenshot/${data[index].id}.png)`
           }"
         >
           <div class="cover">
@@ -45,10 +45,10 @@
             </div>
           </div>
         </li>
-        <li class="item" v-if="noMore === true">已無更多資料</li>
       </div>
     </ul>
-    <Loader class="loader" v-if="loading === true" />
+    <div class="noMore" v-if="noMore === true">已無更多資料</div>
+    <Loader class="loader" type="bottom" zIndex="99" v-if="loading === true" />
   </div>
 </template>
 
@@ -61,10 +61,11 @@ export default {
   data: function() {
     return {
       page: 1,
-      per_page: 5,
+      per_page: 3,
       noMore: false,
       loading: true,
       data: [],
+      index: 0,
       languageColor: languageColor
     };
   },
@@ -82,7 +83,7 @@ export default {
         url: `https://api.github.com/users/${process.env.VUE_APP_ID}/repos`,
         headers: {
           Accept: "application/vnd.github.nebula-preview+json",
-          Authorization: `Bearer ${process.env.VUE_APP_GITHUB_ACCESS_TOKEN}`,
+          Authorization: `Bearer ${process.env.VUE_APP_GITHUB_ACCESS_TOKEN_1}${process.env.VUE_APP_GITHUB_ACCESS_TOKEN_2}`,
           "Content-Type": "application/json"
         },
         params: {
@@ -94,13 +95,18 @@ export default {
         .then(res => {
           let base = that.data.length;
           let languageLoading = new Array(res.data.length);
-          if (res.data.length === 0) {
+          if (res.data.length < that.per_page) {
             that.noMore = true;
+            if (res.data.length === 0) {
+              that.loading = false;
+            }
           }
           for (let i = 0; i < languageLoading.length; i++) {
             languageLoading[i] = true;
           }
-          that.data = that.data.concat(res.data);
+          for (let i = 0; i < res.data.length; i++) {
+            that.data.push(res.data[i]);
+          }
           for (let i = 0; i < languageLoading.length; i++) {
             that.getLanguages(base, i, languageLoading);
           }
@@ -118,7 +124,7 @@ export default {
         }/languages`,
         headers: {
           Accept: "application/vnd.github.v3+json",
-          Authorization: `Bearer ${process.env.VUE_APP_GITHUB_ACCESS_TOKEN}`,
+          Authorization: `Bearer ${process.env.VUE_APP_GITHUB_ACCESS_TOKEN_1}${process.env.VUE_APP_GITHUB_ACCESS_TOKEN_2}`,
           "Content-Type": "application/json"
         }
       })
@@ -158,9 +164,12 @@ export default {
     let that = this;
     document.addEventListener("scroll", () => {
       if (
+        that.noMore === false &&
         document.documentElement.scrollHeight -
+          window.innerHeight -
           document.documentElement.scrollTop <
-        30
+          200 &&
+        that.loading === false
       ) {
         that.page++;
         that.getData();
@@ -171,8 +180,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "../assets/scss/_color.scss";
 $listTextSize: 16px;
-$listTextColor: #000;
 
 .repository {
   margin-left: 250px;
@@ -180,7 +189,7 @@ $listTextColor: #000;
 }
 .list {
   font-size: $listTextSize;
-  color: $listTextColor;
+  color: $primary;
 }
 
 .item {
@@ -188,20 +197,16 @@ $listTextColor: #000;
   display: flex;
   align-items: center;
   box-shadow: inset 0 0 10px #333;
-  border: 5px solid #fff;
+  border: 5px solid $secondary;
   background-attachment: fixed;
   background-size: calc(100% - 250px);
   background-position: right 0 top 0;
   background-repeat: no-repeat;
-  @media (max-width: 768px) {
-    height: 50vh;
-  }
   .cover {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.1);
     position: relative;
-    z-index: 1;
   }
   .bar {
     padding: 3em;
@@ -222,7 +227,7 @@ $listTextColor: #000;
       padding: 5px;
     }
     a {
-      color: $listTextColor;
+      color: $primary;
       text-decoration: none;
     }
     .icons {
@@ -239,11 +244,16 @@ $listTextColor: #000;
         transition: 0.3s;
         &:hover {
           transform: scale(1.5);
+          color: $tertiary-2;
         }
       }
     }
     .languages {
       display: flex;
+      position: absolute;
+      width: 100%;
+      bottom: 1.5em;
+      left: 0;
       .language {
         display: flex;
         justify-content: center;
@@ -267,7 +277,19 @@ $listTextColor: #000;
     }
   }
 }
-.loader {
-  height: 100vh;
+.noMore {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+}
+@media (max-width: 768px) {
+  .repository {
+    margin: 0;
+    .item {
+      background-position: center top;
+      background-size: 100%;
+    }
+  }
 }
 </style>
