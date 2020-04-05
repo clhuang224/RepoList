@@ -1,54 +1,61 @@
 <template>
   <div class="repository">
-    <ul class="list">
-      <div v-for="(item, index, key) of data" :key="key">
-        <li
+    <ul class="list" @scroll="infinite()">
+      <li v-for="(item, index, key) of data" :key="key">
+        <div
           class="item"
           v-if="item.id !== 252436010"
-          :style="{
-            backgroundImage: `url(
-                        https://clhuang224.github.io/screenshot/${data[index].id}.png)`
-          }"
+          :class="{ last: index === data.length - 1 }"
         >
-          <div class="cover">
-            <div class="bar">
-              <h3 class="title">
-                {{ item.name }}
-              </h3>
-              <p class="description">
-                {{ item.description }}
-              </p>
-              <ul class="icons">
-                <li class="html_url">
-                  <a :href="item.html_url" target="_blank" :alt="item.html_url">
-                    <font-awesome-icon class="icon" :icon="['fas', 'code']" />
-                  </a>
-                </li>
-                <li class="homepage" v-if="item.homepage">
-                  <a :href="item.homepage" target="_blank" :alt="item.homepage">
-                    <font-awesome-icon class="icon" :icon="['fas', 'eye']" />
-                  </a>
-                </li>
-              </ul>
-              <ul class="languages" v-if="item.languages">
-                <li
-                  class="language"
-                  v-for="(language, i, k) of item.languages.array"
-                  :key="k"
-                  :style="{
-                    width: `${(language.value * 100) / item.languages.sum}%`,
-                    borderColor: languageColor[language.name].color
-                  }"
-                  :data-text="language.name"
-                ></li>
-              </ul>
-            </div>
+          <div
+            class="image"
+            :style="{
+              backgroundImage: `url(
+                        https://clhuang224.github.io/screenshot/${item.id}.png)`
+            }"
+          ></div>
+          <div class="bar">
+            <h3 class="title">
+              {{ item.name }}
+            </h3>
+            <p class="description">
+              {{ item.description }}
+            </p>
+            <ul class="icons">
+              <li class="html_url">
+                <a :href="item.html_url" target="_blank" :alt="item.html_url">
+                  <font-awesome-icon class="icon" :icon="['fas', 'code']" />
+                </a>
+              </li>
+              <li class="homepage" v-if="item.homepage">
+                <a :href="item.homepage" target="_blank" :alt="item.homepage">
+                  <font-awesome-icon class="icon" :icon="['fas', 'eye']" />
+                </a>
+              </li>
+            </ul>
+            <ul class="languages" v-if="item.languages">
+              <li
+                class="language"
+                v-for="(language, i, k) of item.languages.array"
+                :key="k"
+                :style="{
+                  width: `${(language.value * 100) / item.languages.sum}%`,
+                  borderColor: languageColor[language.name].color
+                }"
+                :data-text="language.name"
+              ></li>
+            </ul>
           </div>
-        </li>
-      </div>
+        </div>
+      </li>
+      <div class="noMore" v-if="noMore === true">已無更多資料</div>
+      <Loader
+        class="loader"
+        type="bottom"
+        zIndex="99"
+        v-if="loading === true"
+      />
     </ul>
-    <div class="noMore" v-if="noMore === true">已無更多資料</div>
-    <Loader class="loader" type="bottom" zIndex="99" v-if="loading === true" />
   </div>
 </template>
 
@@ -155,26 +162,21 @@ export default {
         .catch(err => {
           console.log(err);
         });
+    },
+    infinite: function() {
+      let list = document.querySelector(".repository .list");
+      if (
+        this.noMore === false &&
+        list.scrollHeight - list.clientHeight - list.scrollTop < 50 &&
+        this.loading === false
+      ) {
+        this.page++;
+        this.getData();
+      }
     }
   },
   mounted() {
     this.getData();
-  },
-  created() {
-    let that = this;
-    document.addEventListener("scroll", () => {
-      if (
-        that.noMore === false &&
-        document.documentElement.scrollHeight -
-          window.innerHeight -
-          document.documentElement.scrollTop <
-          200 &&
-        that.loading === false
-      ) {
-        that.page++;
-        that.getData();
-      }
-    });
   }
 };
 </script>
@@ -183,30 +185,45 @@ export default {
 @import "../assets/scss/_color.scss";
 $listTextSize: 16px;
 
-.repository {
-  margin-left: 250px;
-  position: relative;
-}
 .list {
   font-size: $listTextSize;
   color: $primary;
+  height: 100vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  perspective: 2px;
+  position: relative;
 }
 
 .item {
   height: 150vh;
-  display: flex;
-  align-items: center;
-  box-shadow: inset 0 0 10px #333;
-  border: 5px solid $secondary;
-  background-attachment: fixed;
-  background-size: calc(100% - 250px);
-  background-position: right 0 top 0;
-  background-repeat: no-repeat;
-  .cover {
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.1);
-    position: relative;
+  position: relative;
+  &.last {
+    height: 100vh;
+  }
+  .image {
+    border: 10px solid $secondary;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateZ(-1px) scale(1.5);
+    background-size: 100%;
+    background-position: center top 0;
+    background-repeat: no-repeat;
+    z-index: -2;
+    &::after {
+      content: "";
+      z-index: -1;
+      position: absolute;
+      background-color: $primary;
+      opacity: 0.3;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
   }
   .bar {
     padding: 3em;
@@ -281,15 +298,13 @@ $listTextSize: 16px;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 5px;
+  position: initial;
+  background-color: $tertiary-1;
+  font-size: $listTextSize * 1.5;
+  height: 25vh;
+  border: 10px solid $secondary;
 }
-@media (max-width: 768px) {
-  .repository {
-    margin: 0;
-    .item {
-      background-position: center top;
-      background-size: 100%;
-    }
-  }
+.loader {
+  border: 10px solid $secondary;
 }
 </style>

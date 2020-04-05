@@ -12,7 +12,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
-$loaderBackgroundColor: #000;
+@import "../assets/scss/_color.scss";
+
+$loaderBackgroundColor: $tertiary-1;
 $loaderCircleColor: #fff;
 $loaderCircleSize: 50px;
 .loader {
@@ -23,13 +25,13 @@ $loaderCircleSize: 50px;
   position: absolute;
   width: 100%;
   height: 100%;
-  left: 0;
-  top: 0;
   background-color: $loaderBackgroundColor;
   &[data-type="global"] {
     position: fixed;
     width: 100%;
     height: 100vh;
+    left: 0;
+    top: 0;
   }
 
   .circle {
@@ -45,12 +47,9 @@ $loaderCircleSize: 50px;
   &[data-type="bottom"] {
     position: initial;
     width: 100%;
-    height: 50px;
-    .circle {
-      width: 25px;
-      height: 25px;
-      border-width: 3px;
-    }
+    height: 25vh;
+    bottom: 0;
+    left: 0;
   }
 }
 @keyframes spin {

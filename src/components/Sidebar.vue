@@ -9,7 +9,8 @@
         :style="`background-image:url(${data.avatar_url})`"
       ></div>
       <h1>
-        {{ data.name }} <span class="subtitle">{{ data.login }}</span>
+        {{ data.name }}
+        <span class="subtitle">{{ data.login }}</span>
       </h1>
       <ul class="list">
         <li class="item">
@@ -109,8 +110,8 @@ $listTextSize: 0.8rem;
   width: $sidebarWidth;
   z-index: 99999;
   transition: transform cubic-bezier(0.25, 0.1, 0.25, 1) 0.5s;
+  box-shadow: 0 0 5px #333;
   .toggleButton {
-    display: none;
     position: absolute;
     right: 5px;
     top: 15px;
@@ -125,11 +126,6 @@ $listTextSize: 0.8rem;
       background-color cubic-bezier(0.25, 0.1, 0.25, 1) 0.5s;
     &:hover {
       color: $tertiary-1;
-    }
-  }
-  @media (max-width: 768px) {
-    .toggleButton {
-      display: block;
     }
   }
   &.hide {
